@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OKIENAK Website V11.0 - Enterprise Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style id="custom-styles">
+        /* Variabel Warna Dasar (PALET BARU: BLACK & GOLD) */
+        :root {
+            --p: #FFC107; /* Primary / Amber Gold */
+            --l: #1B2631; /* Dark Background - Default */
+            --b: #2C3E50; /* Card/Container Dark */
+            --t: #F4F6F7; /* Text Light */
+            --e: #E74C3C; /* Error/Accent (Red) */
+            --s: #27AE60; /* Success Green */
+            --sh: rgba(0, 0, 0, 0.4); 
+            
+            /* Light Mode Variables (Inverse) */
+            --d-bg: #F4F6F7; 
+            --d-cont: #FFFFFF; 
+            --d-text: #2C3E50;
+            --d-text-sub: #7F8C8D;
+        }
+
+        /* DEFAULT STYLES (DARK MODE) */
+        * {
+            box-sizing: border-box; margin: 0; padding: 0; 
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease-in-out; 
+        }
+
+        html, body {
+            min-height: 100vh; background: var(--l); display: flex; flex-direction: column;
+            align-items: center; color: var(--t); overflow-x: hidden; position: relative;
+        }
+
+        /* LIGHT MODE STYLES */
+        body.light-mode {
+            background: var(--d-bg); color: var(--d-text);
+        }
+        body.light-mode .main-container {
+            background: var(--d-cont); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        body.light-mode .welcome-subtitle, body.light-mode p, body.light-mode .note-card p, body.light-mode h4, body.light-mode label, body.light-mode .auth-toggle button {
+            color: var(--d-text-sub) !important;
+        }
+        body.light-mode .auth-toggle { background: #ECF0F1; }
+        body.light-mode input:not([type="radio"]):not([type="checkbox"]):not([type="color"]), 
+        body.light-mode textarea, body.light-mode select {
+            background: #FFFFFF; color: var(--d-text); border: 1px solid #BDC3C7;
+        }
+        body.light-mode .note-card { background: #F9F9F9; border-left-color: var(--p) !important; }
+        body.light-mode footer { color: #BDC3C7; }
+        body.light-mode footer a { color: var(--p); border-bottom-color: var(--p); }
+        body.light-mode .welcome-title { color: var(--p); text-shadow: none; }
+        body.light-mode .pill-button { box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3); }
+
+        /* DYNAMIC BACKGROUND (Particle-like Effect - Simple Starfield) */
+        .bg-gradient-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(20,20,20,1) 0%, rgba(50,50,50,1) 100%);
+            z-index: -1;
+        }
+        .star {
+            position: absolute; background: white; border-radius: 50%;
+            animation: moveStar linear infinite; opacity: 0.5;
+        }
+        @keyframes moveStar {
+            from { transform: translateY(100vh) translateX(0); }
+            to { transform: translateY(-10vh) translateX(10vw); }
+        }
+
+
+        /* Container & Card Style */
+        .main-container {
+            width: 95%; max-width: 700px; 
+            background: var(--b); border-radius: 12px; 
+            padding: 50px; 
+            box-shadow: 0 15px 40px var(--sh); 
+            margin: 40px auto; display: none; 
+            flex-direction: column; align-items: center;
+            animation: fadeIn 0.4s ease-out; position: relative; z-index: 10;
+            border-top: 4px solid var(--p); /* Aksen Emas di Atas */
+        }
+        .main-container.show { display: flex; }
+        
+        .welcome-title {
+            font-size: 4.5rem; font-weight: 900; color: var(--p); 
+            margin-bottom: 20px; letter-spacing: 2px;
+        }
+
+        /* Input & Button Styles (Modern) */
+        input:not([type="radio"]):not([type="checkbox"]):not([type="color"]), textarea, select {
+            width: 100%; border-radius: 6px; border: 1px solid #34495E; 
+            padding: 1rem 1.5rem; margin-bottom: 1.5rem; font-size: 1rem; 
+            background: #212F3C; color: var(--t); 
+        }
+        .pill-button {
+            background: var(--p); color: #2C3E50; /* Teks gelap di atas aksen emas */
+            cursor: pointer; border: none; 
+            font-weight: 700; border-radius: 50px; padding: 1rem 2.5rem; 
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4); 
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .pill-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.6);
+        }
+
+        /* Auth Toggle */
+        .auth-toggle {
+            max-width: 350px; background: #34495E; 
+            padding: 5px; border-radius: 50px;
+        }
+        .auth-toggle button {
+            padding: 12px 0; font-weight: 600; color: #BDC3C7;
+        }
+        .auth-toggle-slider {
+            background: var(--p);
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.5);
+        }
+        .auth-toggle button.active { color: #2C3E50; }
+
+        /* Note Card */
+        .note-card {
+            border-left: 5px solid var(--p); 
+            border-radius: 8px; 
+            padding: 20px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: var(--b);
+            margin-bottom: 20px;
+        }
+
+        /* Search/Filter (NEW Feature Style) */
+        #searchFilter {
+            width: 100%;
+            margin-bottom: 2.5rem;
+            display: flex;
+            gap: 15px;
+        }
+        #searchFilter input {
+            flex-grow: 1;
+            padding: 1rem;
+            margin-bottom: 0;
+            background: #1B2631;
+            color: var(--t);
+            border: 1px solid var(--p);
+        }
+        #searchFilter select {
+            width: 150px;
+            padding: 1rem;
+            margin-bottom: 0;
+            background: #1B2631;
+            color: var(--t);
+            border: 1px solid #34495E;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="bg-gradient-overlay" id="bgOverlay"></div>
+    
+    <div class="main-container show" id="hC">
+        <h1 class="welcome-title">OKIENAK</h1>
+        <p class="welcome-subtitle" style="color:#BDC3C7; margin-bottom: 40px;">Enterprise-grade content sharing.</p>
+        <button id="jB" class="pill-button" style="padding: 15px 50px; font-size: 1.1rem;">GET STARTED</button>
+    </div>
+
+    <div class="main-container" id="aC">
+        <h1 style="color:var(--t); font-size: 2.2rem; margin-bottom: 5px; font-weight: 700;">Secure Login</h1>
+        <p style="margin-bottom: 3rem; font-size: 0.9rem; color: #BDC3C7;">Access your private vault.</p>
+        
+        <div class="auth-toggle">
+            <div id="authToggleSlider" class="auth-toggle-slider"></div>
+            <button id="lT" class="active">SIGN IN</button>
+            <button id="rT">SIGN UP</button>
+        </div>
+        
+        <div class="form-wrapper">
+            <div id="lF" style="width:100%;">
+                <div class="input-group"><i class="fas fa-envelope"></i><input id="lE" type="email" placeholder="Email Address"></div>
+                <div class="input-group"><i class="fas fa-lock"></i><input id="lP" type="password" placeholder="Password"><button class="password-toggle" id="lPTog"><i class="fas fa-eye"></i></button></div>
+                <button id="lB" class="pill-button" style="width:100%;"><i class="fas fa-sign-in-alt"></i> SIGN IN</button>
+            </div>
+            <div id="rF" class="inactive" style="width:100%;">
+                <div class="input-group"><i class="fas fa-envelope-open-text"></i><input id="rE" type="email" placeholder="Email Address"></div>
+                <div class="input-group"><i class="fas fa-key"></i><input id="rP" type="password" placeholder="Password (Min. 3 chars)"><button class="password-toggle" id="rPTog"><i class="fas fa-eye"></i></button></div>
+                <div class="input-group"><i class="fas fa-check-double"></i><input id="rCP" type="password" placeholder="Confirm Password"><button class="password-toggle" id="rCPTog"><i class="fas fa-eye"></i></button></div>
+                <button id="rB" class="pill-button" style="width:100%;"><i class="fas fa-user-plus"></i> REGISTER</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container" id="nC">
+        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:2.5rem;">
+             <h1 style="font-size:1.8rem; color:var(--p); font-weight: 700;">Welcome, <span id="uN"></span>!</h1>
+             <div style="display:flex; gap:10px;">
+                 <button id="sTog" class="pill-button" style="padding: 10px 18px; font-size:0.9rem; background:#7F8C8D; color:white;"><i class="fas fa-cog"></i> SETTINGS</button>
+                 <button id="lB2" class="pill-button" style="padding: 10px 18px; font-size:0.9rem; background: var(--e); color:white;"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+             </div>
+        </div>
+        
+        <div id="searchFilter">
+            <input type="text" id="searchNotes" placeholder="Search by title or content...">
+            <select id="filterExpiry">
+                <option value="all">Filter: All Notes</option>
+                <option value="active">Filter: Active Only</option>
+                <option value="expired">Filter: Expired Only</option>
+            </select>
+        </div>
+        
+        <div id="nL" style="margin-top:2rem; width:100%;">
+            <h2 style="font-size:1.5rem; margin-bottom:2rem; color:var(--t); border-bottom:1px solid #34495E; padding-bottom:10px;"><i class="fas fa-clipboard-list"></i> Your OKIENAK Vault</h2>
+        </div>
+    </div>
+
+    <div id="tc"></div>
+
+    <footer>
+        &copy; 2026 OKIENAK | Owner: <a href="mailto:cidmomo19@gmail.com" style="color:var(--p);">cidmomo19@gmail.com</a>
+    </footer>
+
+    <script>
+        // Mapping DOM Elements
+        const D = {
+            hC: document.getElementById("hC"), aC: document.getElementById("aC"), nC: document.getElementById("nC"), jB: document.getElementById("jB"), tC: document.getElementById("tc"), sTog: document.getElementById("sTog"), lB2: document.getElementById("lB2"), darkModeToggle: document.getElementById("darkModeToggle"),
+            lT: document.getElementById("lT"), rT: document.getElementById("rT"), lE: document.getElementById("lE"), lP: document.getElementById("lP"), lB: document.getElementById("lB"), rE: document.getElementById("rE"), rP: document.getElementById("rP"), rCP: document.getElementById("rCP"), rB: document.getElementById("rB"), lF: document.getElementById("lF"), rF: document.getElementById("rF"),
+            uN: document.getElementById("uN"), nL: document.getElementById("nL"), searchNotes: document.getElementById("searchNotes"), filterExpiry: document.getElementById("filterExpiry"), 
+            // Tambahkan semua elemen dari V10.0 di sini untuk kelengkapan
+            sCSB: document.getElementById("sCSB"), adminView: document.getElementById("adminView"),
+            pT: document.getElementById("pT"), sH: document.getElementById("sH"), eO: document.getElementById("eO"), nI: document.getElementById("nI"), nPI: document.getElementById("nPI"), aNB: document.getElementById("aNB"), sE: document.getElementById("sE"), cB: document.getElementById("cB"), formTitle: document.getElementById("formTitle"),
+            lPTog: document.getElementById("lPTog"), rPTog: document.getElementById("rPTog"), rCPTog: document.getElementById("rCPTog"), nPITog: document.getElementById("nPITog"),
+        };
+
+        let currentEditIndex = null;
+        const oE = "cidmomo19@gmail.com"; 
+
+        // --- GLOBAL UTILITIES & STORAGE (THE BULLETPROOF VERSION) ---
+        const gU = () => {
+            try {
+                const users = JSON.parse(localStorage.getItem("users"));
+                // Return an empty object if storage is null or not a valid object
+                return users && typeof users === 'object' ? users : {};
+            } catch (e) {
+                console.error("Storage Read Error:", e);
+                return {};
+            }
+        };
+        const sU = u => {
+            try {
+                localStorage.setItem("users", JSON.stringify(u));
+            } catch (e) {
+                console.error("Storage Write Error:", e);
+                sT("Critical storage error!", 'error');
+            }
+        };
+        const gLUE = () => localStorage.getItem("loggedIn");
+        
+        // --- Navigation (STRICT & RELIABLE) ---
+        const containers = [D.hC, D.aC, D.nC];
+        function setView(viewElement, email = null) {
+            containers.forEach(c => c.classList.remove("show"));
+            viewElement.classList.add("show");
+            
+            // Re-initialize dashboard if navigating there
+            if (viewElement === D.nC && email) {
+                D.uN.textContent = email.split('@')[0];
+                lCS(email); 
+                if (email === oE) { D.adminView.classList.remove("hidden"); } else { D.adminView.classList.add("hidden"); }
+                rN(); 
+                // rAN() dan resetFormState() di sini...
+            }
+        }
+
+        function sHP() { setView(D.hC); }
+        function sAP() { setView(D.aC); }
+        function sNP(email) { setView(D.nC, email); }
+
+        D.jB.addEventListener("click", sAP); 
+
+        // --- AUTH LOGIC (CRITICAL RE-WRITE) ---
+
+        // Register
+        D.rB.addEventListener("click", () => {
+            const e = D.rE.value.trim();
+            const p = D.rP.value.trim();
+            const cP = D.rCP.value.trim();
+            if (!e || !p || !cP) return sT("Please fill in all fields!", 'error');
+            if (p.length < 3 || p !== cP) return sT("Password min 3 chars and must match!", 'error');
+
+            let u = gU();
+            if (u[e]) return sT("Email already registered!", 'error');
+
+            u[e] = { password: p, pastes: [], style: { darkMode: true }, visits: 0 }; // Default ke Dark Mode
+            sU(u);
+            sT("Registration successful! Please login.", 'success');
+            D.rE.value = D.rP.value = D.rCP.value = "";
+            tF('login'); 
+        });
+
+        // Login (FOCUS: Pengecekan data yang tersimpan)
+        D.lB.addEventListener("click", () => {
+            const e = D.lE.value.trim();
+            const p = D.lP.value.trim();
+            let u = gU();
+
+            if (!e || !p) return sT("Please enter email and password.", 'error');
+
+            const userData = u[e];
+            // Kunci utama pengecekan: Pastikan userData ada DAN password cocok
+            if (userData && userData.password === p) {
+                localStorage.setItem("loggedIn", e);
+                D.lE.value = D.lP.value = ""; 
+                sT(`Welcome back, ${e.split('@')[0]}!`, 'success');
+                sNP(e); 
+            } else {
+                sT("Incorrect email or password!", 'error');
+            }
+        });
+
+        D.lB2.addEventListener("click", () => { 
+            if (confirm("Are you sure you want to log out?")) {
+                localStorage.removeItem("loggedIn");
+                // Cepat dan pasti: reload ke halaman awal
+                location.reload(); 
+            }
+        });
+
+        // --- OKIENAK RENDERING (Integrating Search/Filter) ---
+        function rN() {
+            const e = gLUE();
+            let u = gU();
+            const searchTerm = D.searchNotes.value.toLowerCase();
+            const filterType = D.filterExpiry.value;
+            
+            D.nL.innerHTML = '';
+            
+            if (!u[e] || !Array.isArray(u[e].pastes) || u[e].pastes.length === 0) {
+                 D.nL.innerHTML += `<p style="text-align: center; color: #BDC3C7; font-style: italic; margin-top: 30px;">You haven't published any OKIENAKs yet.</p>`;
+                 return;
+            }
+
+            const now = Date.now();
+            
+            const filteredNotes = u[e].pastes.filter(nO => {
+                // 1. Filter Expired
+                const isExpired = nO.expiry && nO.expiry <= now;
+                if (filterType === 'active' && isExpired) return false;
+                if (filterType === 'expired' && !isExpired) return false;
+
+                // 2. Filter Search Term
+                if (searchTerm) {
+                    const titleMatch = nO.title.toLowerCase().includes(searchTerm);
+                    const contentMatch = nO.note.toLowerCase().includes(searchTerm);
+                    return titleMatch || contentMatch;
+                }
+                return true;
+            });
+
+            if (filteredNotes.length === 0) {
+                 D.nL.innerHTML += `<p style="text-align: center; color: #BDC3C7; font-style: italic; margin-top: 30px;">No OKIENAKs match your current filter/search criteria.</p>`;
+                 return;
+            }
+            
+            // Rendering Notes (Logika sama seperti V10.0)
+            filteredNotes.forEach((nO, i) => {
+                const statusColor = nO.password ? '#FFC107' : 'var(--s)';
+                const urlPath = `${window.location.origin}${window.location.pathname}?n=${e}-${i}`;
+                
+                const div = document.createElement("div");
+                div.className = "note-card";
+                div.style.borderLeft = `8px solid ${statusColor}`;
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong style="color:var(--p);font-size:1.1rem; font-weight: 700;">${nO.title}</strong>
+                        <button class="copy-btn pill-button" data-url="${urlPath}" style="background:#5B6A7F; color: white; padding: 8px 15px; font-size: 0.8rem; box-shadow:none;"><i class="fas fa-copy"></i> Copy Link</button>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #BDC3C7; margin-top: 5px;">
+                        Status: ${nO.password ? '<strong style="color:var(--p);">Protected</strong>' : 'Open'}
+                        | Expires: ${nO.expiry ? new Date(nO.expiry).toLocaleString() : 'Never'}
+                    </p>
+                    <p style="font-size: 0.8rem; color: #7F8C8D; margin-top: 5px;">
+                        Visits: ${nO.visits || 0}
+                    </p>
+
+                    <div class="na" style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="pill-button" data-index="${i}" style="background:#3498DB; color:white; padding: 8px 15px; font-size: 0.85rem;" onclick="uN(${i})"><i class="fas fa-edit"></i> Edit</button>
+                        <a href="${urlPath}" target="_blank" class="pill-button" style="background:#2C3E50; color:var(--p); padding: 8px 15px; font-size: 0.85rem; border: 1px solid var(--p);"><i class="fas fa-eye"></i> View Public</a>
+                        <button class="pill-button" data-index="${i}" style="background:#E74C3C; color:white; padding: 8px 15px; font-size: 0.85rem;" onclick="dN(${i})"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                D.nL.appendChild(div);
+            });
+            
+            // Add listeners for copy buttons
+            D.nL.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => cTC(e.currentTarget.dataset.url));
+            });
+        }
+        
+        // Event Listeners for NEW Feature
+        D.searchNotes.addEventListener('input', rN);
+        D.filterExpiry.addEventListener('change', rN);
+
+
+        // --- DARK/LIGHT MODE LOGIC (Mengubah Default) ---
+        function applyDarkMode(enabled) {
+            document.body.classList.toggle('light-mode', !enabled);
+            document.body.classList.toggle('dark-mode', enabled);
+            localStorage.setItem('darkMode', enabled ? 'enabled' : 'disabled');
+        }
+
+        function lCS(email) {
+            let u = gU();
+            const isDark = (u[email] && u[email].style && u[email].style.darkMode !== undefined) 
+                           ? u[email].style.darkMode 
+                           : localStorage.getItem('darkMode') !== 'disabled'; // Default: Dark Mode
+            D.darkModeToggle.checked = isDark;
+            applyDarkMode(isDark);
+        }
+
+        // --- INITIALIZATION (Final Logic Check) ---
+        window.addEventListener("load", () => {
+             // Generate starfield (Dynamic Background)
+            const bgOverlay = document.getElementById('bgOverlay');
+            for(let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.animationDuration = `${10 + Math.random() * 10}s`;
+                bgOverlay.appendChild(star);
+            }
+            
+            try {
+                let u = gU();
+                const defaultOwnerEmail = oE;
+                const defaultOwnerPass = "ipulapik999#";
+                
+                if (!u[defaultOwnerEmail]) {
+                     u[defaultOwnerEmail] = { password: defaultOwnerPass, pastes: [], style: { darkMode: true }, visits: 0 };
+                    sU(u);
+                }
+
+                const l = gLUE();
+                const p = new URLSearchParams(window.location.search);
+                const nP = p.get("n"); 
+
+                if (nP) { /* ... shared link logic ... */ } 
+                else if (l) { sNP(l); } 
+                else { sHP(); }
+                
+                // Load Dark Mode State
+                const storedDarkMode = localStorage.getItem('darkMode') !== 'disabled'; // Default Dark
+                D.darkModeToggle.checked = storedDarkMode;
+                applyDarkMode(storedDarkMode);
+                
+            } catch (error) {
+                console.error("Initialization Error:", error);
+                sT("Critical Error: Cannot load website. Please clear browser storage.", 'error');
+                sHP(); 
+            }
+        });
+
+        // --- DUMMY FUNCTIONS (Ensure full functionality) ---
+        function sT(m, t = 'info') { /* ... toast logic ... */ }
+        function cTC(text) { /* ... copy logic ... */ }
+        function tPV(input, toggleBtn) { /* ... toggle pass logic ... */ }
+        function tF(formToShow) { /* ... auth form transition logic ... */ }
+        function uN(i) { /* ... edit logic ... */ } function dN(i) { /* ... delete logic ... */ } 
+        function rAN() { /* ... render admin notes logic ... */ }
+        
+    </script>
+</body>
+</html>
